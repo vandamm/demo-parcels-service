@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Parcel {
+  id         String    @id @default(uuid())
+  identifier String
+  carrier    String
+  from       Address   @relation(fields: [fromId], references: [id], name: "FromAddress")
+  fromId     String
+  to         Address   @relation(fields: [toId], references: [id], name: "ToAddress")
+  toId       String
+  articles   Article[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([identifier, carrier])
+}
+
+model Address {
+  id          String   @id @default(uuid())
+  raw         String
+  zip         String
+  country     String
+  lat         Float
+  long        Float
+  FromParcels Parcel[] @relation("FromAddress")
+  ToParcels   Parcel[] @relation("ToAddress")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Article {
+  id        String   @id @default(uuid())
+  name      String
+  quantity  Int
+  price     Float
+  sku       String
+  parcel    Parcel   @relation(fields: [parcelId], references: [id])
+  parcelId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
