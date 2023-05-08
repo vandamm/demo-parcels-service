@@ -22,6 +22,9 @@ class EnvironmentVariables {
   @IsNumber()
   @IsOptional()
   WEATHER_CACHE_TTL: number;
+
+  @IsString()
+  DATABASE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {
